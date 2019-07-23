@@ -1,0 +1,127 @@
+//
+//  PrefixHeader.pch
+//  TianjinTrip
+//
+//  Created by Mac on 2017/10/19.
+//  Copyright © 2017年 Mac. All rights reserved.
+//
+
+typedef void(^CPClickButton)(id, long);
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+// tools
+#import <objc/runtime.h>
+#import "Ration.h"
+#import "Color.h"
+#import "alert.h"
+#import "font.h"
+#import "FileControl.h"
+#import "CPUtils.h"
+#import "CPHotspotManager.h"
+
+
+// base
+#import "BaseModel.h"
+#import "BaseViewController.h"
+#import "HttpURLRequest.h"
+
+// 三方
+#import "UIImageView+WebCache.h"
+
+// view
+#import "UIView+Frame.h"
+#import "CPSwithButtonView.h"
+#import "UIView+Layout.h"
+#import "UIColor+Hex.h"
+#import "CPInsetsLabel.h"
+#import "CPPhotoPreview.h"
+
+// ViewController
+#import "CPTabbarController.h"
+#import "UIViewController+Cloudox.h"
+#import "UIViewController+CPExtend.h"
+#import "UINavigationController+Cloudox.h"
+
+// 常用
+#import "AppDelegate.h"
+#import "ExceptionHandler.h"
+
+#pragma mark - ------- 设备 层 ------- -
+// 是否是iPad
+#define isPad (UI_USER_INTERFACE_IDIOM()== UIUserInterfaceIdiomPad)
+#define isPhone (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+#define isPhoneX ({\
+                    BOOL isX = NO;\
+                    if (@available(iOS 11.0, *)) {\
+                        if (!UIEdgeInsetsEqualToEdgeInsets([UIApplication sharedApplication].delegate.window.safeAreaInsets, UIEdgeInsetsZero)) {\
+                        isX = YES;\
+                        }\
+                    }\
+                    isX;\
+                    })
+
+#pragma mark - ------- 系统 层 ------- -
+// 版本
+#define SYS_VERSION         [[[UIDevice currentDevice] systemVersion] doubleValue]
+// 判断系统版本
+#define kiOS8OrLater (SYS_VERSION >= 8.0)
+#define kiOS9OrLater (SYS_VERSION >= 9.0)
+#define kiOS10OrLater (SYS_VERSION >= 10.0)
+#define kiOS11OrLater (SYS_VERSION >= 11.0)
+#define kiOS12OrLater (SYS_VERSION >= 12.0)
+// 语言
+#define SYS_LANGUAGE        [[NSLocale preferredLanguages] objectAtIndex:0]
+
+#pragma mark - ------- App 层 ------- -
+// AppD
+#define App_Delegate ((AppDelegate *)[UIApplication sharedApplication].delegate)
+#define App_Window (App_Delegate.window)
+#define Key_Window ([UIApplication sharedApplication].keyWindow)
+#define Top_Window ([[UIApplication sharedApplication].windows lastObject])
+//版本
+#define APP_VERSION         [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]
+//build
+#define APP_BUILD           [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]
+//名称
+#define APP_NAME            [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString*)kCFBundleNameKey]
+//ID
+#define APP_ID              [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString*)kCFBundleIdentifierKey]
+
+#pragma mark - ------- 尺寸 层 ------- -
+//获取屏幕宽高
+#define Size_ScreenWidth ([[UIScreen mainScreen]bounds].size.width)
+#define Size_ScreenHeight ([[UIScreen mainScreen]bounds].size.height)
+#define Size_StatuBarHeight ([[UIApplication sharedApplication] statusBarFrame].size.height)
+#define Size_NavBarHeight (self.navigationController.navigationBar.frame.size.height?:44)
+#define Size_Safe_Top_Height (StatuBarHeight+NavBarHeight)
+#define Size_Safe_Bottom_Height (isPhoneX?83:49)
+#define Size_TopBarHeight (isPhoneX?88.f:64.f)
+#define Size_SafeHeight_Top(h) (isPhoneX?(h+24):h)
+#define Size_SafeHeight_Bottom(h) (isPhoneX?(h+34):h)
+#define Size_SafeHeight_Height (self.view.bounds.size.height-(Size_SafeHeight_Top(20.)+Size_Safe_Bottom_Height))
+
+#pragma mark - ------- 代码 层 ------- -
+//循环引用规避
+#define Code_Weakify(o) __weak __typeof__(o) weak##_##o = o;
+#define Code_Strongify(o) __strong __typeof__(o) o = weak##_##o;
+// 测试的时候打印语句，发布程序的时候自动去除打印语句
+#ifndef __OPTIMIZE__
+#define NSLog(fmt, ...)  NSLog((@"\n[文件:%s]\n""[函数:%s]\n""[行号:%d] \n" fmt), __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#else
+#define NSLog(...)
+#endif
+// 字符串
+#define Code_StringFormat(format,...) ([NSString stringWithFormat:format,##__VA_ARGS__])
+#define Code_NSStringFromNumber(num) StringFormat(@"%@", num)
+
+//#define IFlyObjc [IFlySpeechSynthesizer sharedInstance]
+//
+//
+//#define kUrlScheme  @"wx5483fa5723abab78"
+
+
+#endif /* PrefixHeader_pch */
+
+

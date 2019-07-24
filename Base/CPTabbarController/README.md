@@ -1,7 +1,7 @@
 # CPTabbarController
 自定义TabbarController，可设置随意一个tabItem为大图，方便设置阴影，具体看下方使用。
 
-# 图例
+### 图例
 ![image](https://github.com/Bo-Po/Tool/blob/master/Base/CPTabbarController/tabbar.png)
 ### 集成方法
    1. 将CPTabbarController文件夹拖入项目，引入头文件 

@@ -19,6 +19,7 @@ typedef void(^CPClickButton)(id, long);
 #import "font.h"
 #import "FileControl.h"
 #import "CPUtils.h"
+#import "cyhCoredtaDB.h"
 #import "CPHotspotManager.h"
 
 
@@ -40,6 +41,7 @@ typedef void(^CPClickButton)(id, long);
 
 // ViewController
 #import "CPTabbarController.h"
+#import "CPPViewController.h"
 #import "UIViewController+Cloudox.h"
 #import "UIViewController+CPExtend.h"
 #import "UINavigationController+Cloudox.h"

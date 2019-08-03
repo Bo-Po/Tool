@@ -38,6 +38,7 @@ typedef void(^CPClickButton)(id, long);
 #import "UIColor+Hex.h"
 #import "CPInsetsLabel.h"
 #import "CPPhotoPreview.h"
+#import "CPProgressBar.h"
 
 // ViewController
 #import "CPTabbarController.h"

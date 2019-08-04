@@ -11,18 +11,27 @@
 #define controlSiza 10          // 控制柄大小
 #define controlOffset 2         // 控制柄外环粗细
 
+static BOOL _anim_control;            // 动画控制
+
 #import "CPProgressBar.h"
 
 @interface CPProgressBar () {
+    CGFloat _oldProgress;
     CAShapeLayer *_bottomLayer;      // 底层
     CAShapeLayer *_topLayer;         // 顶层
     CAShapeLayer *_control;          // 控制柄
     CGColorRef _defaultColor;
     CGColorRef _tintColor;
+    
+    // 动画
+    CADisplayLink *_display;
 }
 @property (nonatomic, strong) CAShapeLayer *bottomLayer;
 @property (nonatomic, strong) CAShapeLayer *topLayer;
 @property (nonatomic, strong) CAShapeLayer *control;
+
+// 动画
+@property (nonatomic, strong) CADisplayLink *display;
 
 @end
 
@@ -51,6 +60,21 @@
     _tintColor = tintColor.CGColor;
     return self;
 }
+- (void)setProgress:(CGFloat)progress animation:(BOOL)animation {
+    if (_progress == progress) {
+        return;
+    }
+    _oldProgress = _progress;
+    _progress = progress;
+    if (animation) {
+        _anim_control = _oldProgress > _progress;
+        _isAnim = YES;
+        self.display.paused = NO;
+    } else {
+        _oldProgress = _progress;
+        [self drawProgress];
+    }
+}
 
 - (void)layoutSubviews {
     self.bottomLayer.bounds = self.bounds;
@@ -64,7 +88,7 @@
 - (void)drawProgress {
     CGFloat w = self.bounds.size.width;
     CGFloat y = self.bounds.size.height/2.0;
-    CGFloat prg = (w - progressStart*2)*self.progress; // 进度条的实际到达当前进度的显示长度
+    CGFloat prg = (w - progressStart*2)*_oldProgress; // 进度条的实际到达当前进度的显示长度
     UIBezierPath *bottomLine = [[UIBezierPath alloc] init];
     [bottomLine moveToPoint:CGPointMake(progressStart, y)];
     [bottomLine addLineToPoint:CGPointMake(w - progressStart, y)];
@@ -88,12 +112,29 @@
     self.control.fillColor = _tintColor;
 }
 
+- (void)updateProgress {
+    if (_anim_control) {
+        _oldProgress = _oldProgress-0.01;
+        [self drawProgress];
+        if (_oldProgress<=_progress) {
+            self.display.paused = YES;
+            _isAnim = NO;
+        }
+    } else {
+        _oldProgress = _oldProgress+0.01;
+        [self drawProgress];
+        if (_oldProgress>=_progress) {
+            self.display.paused = YES;
+            _isAnim = NO;
+        }
+    }
+}
+
 - (void)setProgress:(CGFloat)progress {
     if (_progress == progress) {
         return;
     }
-    _progress = progress;
-    [self drawProgress];
+    [self setProgress:progress animation:NO];
 }
 - (CAShapeLayer *)bottomLayer {
     if (!_bottomLayer) {
@@ -115,6 +156,13 @@
     }
     return _control;
 }
-
+- (CADisplayLink *)display {
+    if (!_display) {
+        _display = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateProgress)];
+        _display.paused = YES;
+        [_display addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+    }
+    return _display;
+}
 
 @end

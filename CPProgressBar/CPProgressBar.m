@@ -16,7 +16,6 @@ static BOOL _anim_control;            // 动画控制
 #import "CPProgressBar.h"
 
 @interface CPProgressBar () {
-    CGFloat _oldProgress;
     CAShapeLayer *_bottomLayer;      // 底层
     CAShapeLayer *_topLayer;         // 顶层
     CAShapeLayer *_control;          // 控制柄
@@ -25,6 +24,9 @@ static BOOL _anim_control;            // 动画控制
     
     // 动画
     CADisplayLink *_display;
+    CGFloat _oldProgress;            // 老的进度值（动画用）
+    
+    BOOL _isResponseTouch;           // 是否响应触摸
 }
 @property (nonatomic, strong) CAShapeLayer *bottomLayer;
 @property (nonatomic, strong) CAShapeLayer *topLayer;
@@ -127,6 +129,55 @@ static BOOL _anim_control;            // 动画控制
             self.display.paused = YES;
             _isAnim = NO;
         }
+    }
+}
+//一根或者多根手指开始触摸view，系统会自动调用view的下面方
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [super touchesBegan:touches withEvent:event];
+    if (self.isAnim) {
+        return;
+    }
+    UITouch *touch = [touches anyObject];
+    //初始point
+    CGPoint point = [touch locationInView:self];
+    
+    if (self.useControl) {
+        CGFloat w = self.bounds.size.width;
+        CGFloat y = self.bounds.size.height/2.0;
+        CGFloat prg = (w - progressStart*2)*_oldProgress; // 进度条的实际到达当前进度的显示长度
+        _isResponseTouch = CGRectContainsPoint(CGRectMake(prg+progressStart-15., y-15., 30, 30), point);
+    }
+}
+//一根或者多根手指在view上移动，系统会自动调用view的下面方法（随着手指的移动，会持续调用该方法)
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    if (_isResponseTouch) {
+        CGFloat w = self.bounds.size.width;
+        CGFloat lengthReal = w - progressStart*2; // 进度条的实际显示长度
+        
+        UITouch *touch = [touches anyObject];
+        //当前的point
+        CGPoint currentP = [touch locationInView:self];
+        //以前的point
+        CGPoint preP = [touch previousLocationInView:self];
+        CGFloat offsetX = currentP.x - preP.x;
+        // 计算百分比
+        CGFloat offsetPerg = offsetX/lengthReal;
+        // 计算当前百分比
+        _oldProgress += offsetPerg;
+        if (_oldProgress < 0) {
+            _oldProgress = 0;
+        } else if (_oldProgress > 1) {
+            _oldProgress = 1;
+        }
+        [self drawProgress];
+    }
+}
+//一根或者多根手指离开view，系统会自动调用view的下面方法
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    [super touchesEnded:touches withEvent:event];
+    self.progress = _oldProgress;
+    if (self.endDidControl) {
+        self.endDidControl(self.progress);
     }
 }
 

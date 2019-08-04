@@ -17,6 +17,12 @@ NS_ASSUME_NONNULL_BEGIN
 // 是否动画中
 @property (nonatomic, readonly, assign) BOOL isAnim;
 
+// 是否可拖动控制进度 默认为NO
+@property (nonatomic, readwrite, assign) BOOL useControl;
+//可拖动控制进度 结束回调
+@property (nonatomic, copy) CPProgressControl endDidControl;
+
+
 /// 设置 颜色与进度
 - (instancetype)setDefaultColor:(UIColor *)defaultColor tintColor:(UIColor *)tintColor progress:(CGFloat)progress;
 /// 设置 进度

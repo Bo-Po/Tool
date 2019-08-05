@@ -47,6 +47,13 @@ static BOOL _anim_control;            // 动画控制
 }
 */
 
+- (void)dealloc {
+    if (_display) {
+        [_display invalidate];
+        _display = nil;
+    }
+}
+
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         [self.layer addSublayer:self.bottomLayer];

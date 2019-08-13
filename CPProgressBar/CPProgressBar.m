@@ -92,6 +92,7 @@ static BOOL _anim_control;            // 动画控制
     self.topLayer.position = CGPointMake(self.bounds.size.width/2.0, self.bounds.size.height/2.0);
     self.control.bounds = self.bounds;
     self.control.position = CGPointMake(self.bounds.size.width/2.0, self.bounds.size.height/2.0);
+    [self drawProgress];
 }
 
 - (void)drawProgress {

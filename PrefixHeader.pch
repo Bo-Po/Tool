@@ -40,6 +40,7 @@ typedef void(^CPProgressControl)(double);
 #import "CPInsetsLabel.h"
 #import "CPPhotoPreview.h"
 #import "CPProgressBar.h"
+#import "CPNoticeLabel.h"
 
 // ViewController
 #import "CPTabbarController.h"

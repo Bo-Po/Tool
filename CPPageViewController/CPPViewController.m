@@ -16,6 +16,13 @@
 
 @implementation CPPViewController
 
+- (instancetype)init {
+    if (self = [super init]) {
+        self.pageStyle = UIPageViewControllerTransitionStyleScroll;
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -23,12 +30,34 @@
 
 - (UIPageViewController *)pageViewController {
     if (!_pageViewController) {
-        NSDictionary *options = [NSDictionary dictionaryWithObject:[NSNumber numberWithInteger:10] forKey:UIPageViewControllerOptionInterPageSpacingKey];
+        NSMutableDictionary *options = [NSMutableDictionary dictionaryWithObjects:@[[NSNumber numberWithInteger:self.pageSpacing], [NSNumber numberWithInteger:UIPageViewControllerSpineLocationMid]] forKeys:@[UIPageViewControllerOptionInterPageSpacingKey, UIPageViewControllerOptionSpineLocationKey]];
+        // [NSMutableDictionary dictionaryWithObjects:@[[NSNumber numberWithInteger:self.pageSpacing], [NSNumber numberWithInteger:UIPageViewControllerSpineLocationMid]] forKeys:@[UIPageViewControllerOptionInterPageSpacingKey, UIPageViewControllerOptionSpineLocationKey] count:2];
         _pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:self.pageStyle navigationOrientation:self.navigationOrientation options:options];
         _pageViewController.delegate = self;
         _pageViewController.dataSource = self;
+        [self addChildViewController:_pageViewController];
+        _pageViewController.view.frame = self.view.bounds;
+        [self.view addSubview:_pageViewController.view];
     }
     return _pageViewController;
+}
+- (void)setViewControllers:(NSArray<UIViewController *> *)viewControllers {
+    _viewControllers = viewControllers;
+    NSInteger num = 1;
+    if (self.pageStyle == UIPageViewControllerTransitionStylePageCurl) {
+        num = 2;
+    }
+    NSArray *controller = nil;
+    if (_viewControllers.count>num) {
+        NSMutableArray *arr = [NSMutableArray arrayWithCapacity:num];
+        for (NSInteger i = 0; i < num; i++) {
+            [arr addObject:_viewControllers[i]];
+        }
+        controller = arr;
+    } else {
+        controller = _viewControllers;
+    }
+    [self.pageViewController setViewControllers:controller direction:(UIPageViewControllerNavigationDirectionReverse) animated:YES completion:nil];
 }
 
 /*
@@ -41,12 +70,26 @@
 }
 */
 
-- (nullable UIViewController *)pageViewController:(nonnull UIPageViewController *)pageViewController viewControllerAfterViewController:(nonnull UIViewController *)viewController {
-    return viewController;
+- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController {
+    NSLog(@"后一个视图控制器");
+    NSInteger index = [self.viewControllers indexOfObject:viewController];
+    if (index == self.viewControllers.count - 1 || (index == NSNotFound)) {
+        return nil;
+    }
+    index++;
+    
+    return [self.viewControllers objectAtIndex:index];
 }
 
-- (nullable UIViewController *)pageViewController:(nonnull UIPageViewController *)pageViewController viewControllerBeforeViewController:(nonnull UIViewController *)viewController {
-    return viewController;
+- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController {
+    NSLog(@"前一个视图控制器");
+    NSInteger index = [self.viewControllers indexOfObject:viewController];
+    if (index == 0 || (index == NSNotFound)) {
+        return nil;
+    }
+    index--;
+    
+    return [self.viewControllers objectAtIndex:index];
 }
 
 @end

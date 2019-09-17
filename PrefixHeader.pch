@@ -52,6 +52,7 @@ typedef void(^CPProgressControl)(double);
 // 常用
 #import "AppDelegate.h"
 #import "ExceptionHandler.h"
+#import "CPSpotLoadView.h"
 
 #pragma mark - ------- 设备 层 ------- -
 // 是否是iPad

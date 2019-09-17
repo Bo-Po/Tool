@@ -136,6 +136,14 @@
     _tapBlock = tapBlock;
     [self.titleLabel addGestureRecognizer:self.tap];
 }
+- (void)setTextColor:(UIColor *)textColor {
+    if (_textColor == textColor) {
+        return;
+    }
+    _textColor = textColor;
+    self.titleLabel.textColor = _textColor;
+    self.afterLabel.textColor = _textColor;
+}
 
 - (UILabel *)titleLabel {
     if (!_titleLabel) {

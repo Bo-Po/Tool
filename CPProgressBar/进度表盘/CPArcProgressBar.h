@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGFloat stareAngle; // 开始角度
 @property (nonatomic, assign) CGFloat endAngle; // 结束角度
 
+// 刻度的相关的控制
 @property (nonatomic, assign) BOOL showDial; // if ture 则显示刻度盘
 @property (nonatomic) UIColor *dialHighlightedColor; // showDial is ture 则刻度盘点亮时的颜色
 

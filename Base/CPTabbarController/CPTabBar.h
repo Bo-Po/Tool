@@ -33,12 +33,17 @@ isPhoneX;\
 - (void)tabBarPlusBtnClick:(CPTabBar *)tabBar;
 @end
 
+typedef enum : NSUInteger {
+    CPBarStyleDefault = 0,
+    CPBarStyleSystem,
+} CPBarStyle;
 
 @interface CPTabBar : UITabBar
 
 /** tabbar的代理 */
 @property (nonatomic, weak) id<CPTabBarDelegate> myDelegate;
 @property (nonatomic, assign) BOOL showShadow;
+@property (nonatomic, assign) CPBarStyle style;
 
 
 - (void)setBigItem:(int)index;

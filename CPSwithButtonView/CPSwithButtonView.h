@@ -10,6 +10,10 @@
 
 #ifndef BUTTON_TAG
 #define BUTTON_TAG   10000
+
+#define kCPSButtonNormalImage @"kCPSButtonNormalImage"
+#define kCPSButtonSelectedImage @"kCPSButtonSelectedImage"
+
 #endif
 
 /*!
@@ -34,7 +38,8 @@
 typedef enum : NSUInteger {
     CPSwithButtonTypeDefault = 0,
     CPSwithButtonTypeFixed = CPSwithButtonTypeDefault,
-    CPSwithButtonTypeScroll
+    CPSwithButtonTypeScroll,
+    CPSwithButtonTypeAlignmentBothEnds,
 } CPSwithButtonType;
 
 /*!
@@ -55,6 +60,10 @@ typedef enum : NSUInteger {
 
 @property (nonatomic, copy) CPClickButton didTappedButton;
 @property (nonatomic, assign) CPSwithButtonType type;
+@property (nonatomic, assign) BOOL lineIsFixedWidth;
+@property (nonatomic, assign) BOOL permitirVariasTap;
+@property (nonatomic, assign) CGFloat paddingH;
+@property (nonatomic, copy) NSArray <NSNumber *>*excludes;
 
 /*!
  @method        createSwithButton:
@@ -65,6 +74,15 @@ typedef enum : NSUInteger {
  */
 - (void)createSwithButton:(NSArray *)num font:(UIFont *)font defaultColor:(UIColor *)defaultColor selectedColor:(UIColor *)selectedColor;
 - (void)setButtonTitles:(NSArray <NSString *>*)titles;
+- (void)setButtonImages:(NSArray <NSDictionary <NSString *, id>*>*)images transverse:(int) transverse;
+// 单独设置选中文字字体
+- (void)setSelectedFont:(UIFont *)selectedFont;
+// 设置下划线颜色
+- (void)setLineColor:(UIColor *)color;
+- (void)setLineGradientColor:(CAGradientLayer *)gradientColor;
+- (void)setLineOffset:(UIEdgeInsets)edge;
+- (void)setLineHeight:(CGFloat)height;
+- (void)setLineSize:(CGSize)size;
 
 /*! @property    delegate 控件代理 */
 @property (nonatomic,weak) IBOutlet id<CPSwithButtonDelegate> delegate;

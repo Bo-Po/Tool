@@ -11,8 +11,6 @@
 #define controlSiza 10          // 控制柄大小
 #define controlOffset 2         // 控制柄外环粗细
 
-static BOOL _anim_control;            // 动画控制
-
 #import "CPProgressBar.h"
 
 @interface CPProgressBar () {
@@ -27,6 +25,8 @@ static BOOL _anim_control;            // 动画控制
     CGFloat _oldProgress;            // 老的进度值（动画用）
     
     BOOL _isResponseTouch;           // 是否响应触摸
+    
+    BOOL _anim_control;            // 动画控制
 }
 @property (nonatomic, strong) CAShapeLayer *bottomLayer;
 @property (nonatomic, strong) CAShapeLayer *topLayer;
@@ -54,8 +54,25 @@ static BOOL _anim_control;            // 动画控制
     }
 }
 
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        self.cp_progressWidth = progressWidth;
+        self.cp_controlSiza = controlSiza;
+        self.cp_controlOffset = controlOffset;
+        [self.layer addSublayer:self.bottomLayer];
+        [self.layer addSublayer:self.topLayer];
+        [self.layer addSublayer:self.control];
+        [self setDefaultColor:UIColor.grayColor tintColor:UIColor.blueColor progress:0.0];
+    }
+    return self;
+}
+
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
+        self.cp_progressWidth = progressWidth;
+        self.cp_controlSiza = controlSiza;
+        self.cp_controlOffset = controlOffset;
         [self.layer addSublayer:self.bottomLayer];
         [self.layer addSublayer:self.topLayer];
         [self.layer addSublayer:self.control];
@@ -64,15 +81,15 @@ static BOOL _anim_control;            // 动画控制
     return self;
 }
 - (instancetype)setDefaultColor:(UIColor *)defaultColor tintColor:(UIColor *)tintColor progress:(CGFloat)progress {
-    self.progress = progress;
     _defaultColor = defaultColor.CGColor;
     _tintColor = tintColor.CGColor;
+    self.progress = progress;
     return self;
 }
 - (void)setProgress:(CGFloat)progress animation:(BOOL)animation {
-    if (_progress == progress) {
-        return;
-    }
+//    if (_progress == progress) {
+//        return;
+//    }
     _oldProgress = _progress;
     _progress = progress;
     if (animation) {
@@ -103,21 +120,21 @@ static BOOL _anim_control;            // 动画控制
     [bottomLine moveToPoint:CGPointMake(progressStart, y)];
     [bottomLine addLineToPoint:CGPointMake(w - progressStart, y)];
     self.bottomLayer.path = bottomLine.CGPath;
-    self.bottomLayer.lineWidth = progressWidth;
+    self.bottomLayer.lineWidth = self.cp_progressWidth;
     self.bottomLayer.strokeColor = _defaultColor;
     
     UIBezierPath *topLine = [[UIBezierPath alloc] init];
     [topLine moveToPoint:CGPointMake(progressStart, y)];
     [topLine addLineToPoint:CGPointMake(prg+progressStart, y)];
     self.topLayer.path = topLine.CGPath;
-    self.topLayer.lineWidth = progressWidth;
+    self.topLayer.lineWidth = self.cp_progressWidth;
     self.topLayer.strokeColor = _tintColor;
     
     UIBezierPath *control = [[UIBezierPath alloc] init];
-    [control moveToPoint:CGPointMake(prg+progressStart-(controlSiza/2.)+controlOffset/2., y)];
-    [control addArcWithCenter:CGPointMake(prg+progressStart, y) radius:(controlSiza/2.) startAngle:0 endAngle:2*M_PI clockwise:YES];
+    [control moveToPoint:CGPointMake(prg+progressStart-(self.cp_controlSiza/2.)+self.cp_controlOffset/2., y)];
+    [control addArcWithCenter:CGPointMake(prg+progressStart, y) radius:(self.cp_controlSiza/2.) startAngle:0 endAngle:2*M_PI clockwise:YES];
     self.control.path = control.CGPath;
-    self.control.lineWidth = controlOffset;
+    self.control.lineWidth = self.cp_controlOffset;
     self.control.strokeColor = UIColor.whiteColor.CGColor;
     self.control.fillColor = _tintColor;
 }
@@ -190,9 +207,9 @@ static BOOL _anim_control;            // 动画控制
 }
 
 - (void)setProgress:(CGFloat)progress {
-    if (_progress == progress) {
-        return;
-    }
+//    if (_progress == progress) {
+//        return;
+//    }
     [self setProgress:progress animation:NO];
 }
 - (CAShapeLayer *)bottomLayer {

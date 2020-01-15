@@ -8,6 +8,7 @@
 
 #ifndef PrefixHeader_pch
 #import "AppDelegate.h"
+#import "CPInsetsLabel.h"
 
 #define App_Delegate ((AppDelegate *)[UIApplication sharedApplication].delegate)
 #define App_Window (App_Delegate.window)
@@ -20,6 +21,7 @@ static CGFloat cornerRadius = 10;
 static CGFloat magin = 15;
 
 @interface CPSpotLoadView() <CAAnimationDelegate>
+    // 防止窗口被自动销毁
 @property (nonatomic, strong) NSMutableArray *layerArr;
 @end
 
@@ -43,6 +45,10 @@ static CGFloat magin = 15;
 
 + (void)showLoadView {
     [App_Window showLoading];
+}
++ (void)hideLoad {
+    [App_Window hideLoad];
+//    [App_Window  makeKeyAndVisible];
 }
 
 // 画圆
@@ -129,12 +135,16 @@ static CGFloat magin = 15;
 
 @implementation UIView (CPSpotLoadView)
 
-- (CPSpotLoadView *)loadingView
-{
+- (UIWindow *)window {
+    return objc_getAssociatedObject(self, @"window");
+}
+- (void)setWindow:(UIWindow *)window {
+    objc_setAssociatedObject(self, @"window", window, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+- (CPSpotLoadView *)loadingView {
     return objc_getAssociatedObject(self, @"loadingView");
 }
-- (void)setLoadingView:(CPSpotLoadView *)loadingView
-{
+- (void)setLoadingView:(CPSpotLoadView *)loadingView {
     objc_setAssociatedObject(self, @"loadingView", loadingView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 - (void)showLoading {
@@ -151,5 +161,44 @@ static CGFloat magin = 15;
 }
 - (void)hideLoad{
     [self.loadingView removeFromSuperview];
+    [App_Window makeKeyAndVisible];
+}
+
+- (void)showLoadingWithMessage:(NSString *)msg {
+    self.window = [[UIWindow alloc] initWithFrame:App_Window.bounds];
+    UIView *view = [[UIView alloc] init];
+    view.bounds = CGRectMake(0, 0, 150, 150);
+    view.center = CGPointMake(Size_ScreenWidth/2., Size_ScreenHeight/2.);
+    view.backgroundColor = [UIColor colorWithWhite:0 alpha:.5];
+    view.layer.masksToBounds = YES;
+    view.layer.cornerRadius = 15.;
+    [self.window addSubview:view];
+    
+    CPInsetsLabel *lab = [[CPInsetsLabel alloc] init];
+    lab.textInsets = UIEdgeInsetsMake(5, 10, 5, 10);
+    lab.numberOfLines = 0;
+    lab.textAlignment = NSTextAlignmentCenter;
+    lab.font = [UIFont systemFontOfSize:15.];
+    lab.text = msg;
+    lab.textColor = UIColor.whiteColor;
+    lab.backgroundColor = UIColor.clearColor;
+    lab.layer.masksToBounds = YES;
+    lab.layer.cornerRadius = 5.;
+    CGSize size = [lab sizeThatFits:CGSizeMake(view.bounds.size.width, 100)];
+    lab.frame = CGRectMake(0, view.bounds.size.height - size.height, 150, size.height);
+    [view addSubview:lab];
+    
+    CPSpotLoadView *loadingView = [[CPSpotLoadView alloc]initWithFrame:CGRectMake(0, 0, view.bounds.size.width, view.bounds.size.height - size.height)];
+        //    loadingView.number = 3;
+    loadingView.radius = 5;
+    loadingView.magin = 10;
+    loadingView.colors = @[UIColor.redColor, UIColor.greenColor, UIColor.blueColor];
+    [view addSubview:loadingView];
+    
+//    UIViewController *vc = [[UIViewController alloc] init];
+//    [vc.view addSubview:view];
+//
+//    self.window.rootViewController = vc;
+    [self.window makeKeyAndVisible];
 }
 @end

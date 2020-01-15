@@ -32,7 +32,18 @@
 /// 保存文件
 + (BOOL)saveFile:(NSData *)file name:(NSString *)fileName folder:(NSString *)folder isDocuments:(BOOL)isDocuments;
 
-/// 获取设备唯一标识符
+/// 根据网络视频地址获取某一帧图片
++ (UIImage*)thumbnailImageForVideo:(NSURL *)videoURL atTime:(NSTimeInterval)time;
+/// 获取本地视频的缩略图
++(UIImage *)getImage:(NSString *)videoURL;
+/// 根据图片url获取图片尺寸
++(CGSize)getImageSizeWithURL:(id)imageURL;
+
 + (NSString *)idfaString;
 
+
+    /// 缓存大小
++(NSString *)getCachesSize;
+    /// 清除缓存
++ (void)removeCache:(UIView *)view back:(CPClickButton)back;
 @end

@@ -8,9 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
+typedef enum : NSUInteger {
+    CPVerticalAlignmentTop,
+    CPVerticalAlignmentMiddle,
+    CPVerticalAlignmentBottom,
+} CPVerticalAlignment;
+
 @interface CPInsetsLabel : UILabel
 
 /// 控制字体与控件边界的间距
 @property (nonatomic) UIEdgeInsets textInsets;
+@property (nonatomic, assign) IBInspectable CPVerticalAlignment textVerticalAlignment;
 
 @end

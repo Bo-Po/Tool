@@ -25,8 +25,9 @@ NS_ASSUME_NONNULL_BEGIN
 // 是否滚动中
 @property (nonatomic, assign, readonly) BOOL isAnimation;
 
-// 设置点击回调
+// 设置字体相关
 @property (nonatomic) UIColor *textColor;
+@property (nonatomic) UIFont *textFont;
 
 - (instancetype)initWithFrame:(CGRect)frame titles:(nullable NSArray<NSString *> *)titles;
 

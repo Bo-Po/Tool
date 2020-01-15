@@ -23,19 +23,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 // 直接放置到 window 上（注意不要被覆盖）
 + (void)showLoadView;
-
++ (void)hideLoad;
 @end
 
 
 @interface UIView (CPSpotLoadView)
-
-    //显示动画
-- (void)showLoading;
-    //隐藏动画
-- (void)hideLoad;
-
+ // 防止窗口被自动销毁
+@property (nonatomic) UIWindow *window;
 // 每个视图只会有一个，不可主动赋值
 @property (nonatomic, strong, readonly) CPSpotLoadView *loadingView;
+
+//显示动画
+- (void)showLoading;
+//隐藏动画
+- (void)hideLoad;
+- (void)showLoadingWithMessage:(NSString *)msg;
+
 
 @end
 

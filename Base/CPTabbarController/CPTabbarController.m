@@ -33,6 +33,7 @@
 
     CPTabBar *tabbar = [[CPTabBar alloc] init];
     tabbar.myDelegate = self;
+    tabbar.style = self.barStyle;
     [tabbar setBigItem:_index];
     //kvc实质是修改了系统的_tabBar
     [self setValue:tabbar forKeyPath:@"tabBar"];
@@ -50,7 +51,10 @@
     _offset = offset;
     [(CPTabBar *)self.tabBar setBigItem:index offset:offset];
 }
-
+- (void)setBarStyle:(CPBarStyle)barStyle {
+    _barStyle = barStyle;
+    ((CPTabBar *)self.tabBar).style = _barStyle;
+}
 - (void)setHidenTopLine:(BOOL)hidenTopLine {
     if (_hidenTopLine == hidenTopLine) {
         return;
@@ -72,6 +76,12 @@
     }
     _showShadow = showShadow;
     ((CPTabBar *)self.tabBar).showShadow = _showShadow;
+}
+
+- (void)tabBarPlusBtnClick:(CPTabBar *)tabBar {
+    if (self.clickCenterBlock) {
+        self.clickCenterBlock();
+    }
 }
 
 #pragma mark -- UITabbarDelegate

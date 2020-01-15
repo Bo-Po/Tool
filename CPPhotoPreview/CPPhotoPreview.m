@@ -215,18 +215,19 @@
     } else {
         [self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
         [self.view addSubview:self.imageView];
-        Code_Weakify(self)
-        [UIView animateWithDuration:.25 animations:^{
-            Code_Strongify(self)
-            self.imageView.frame = self->_prect;
-            self.imageView.contentMode = self->_mode;
-            self.view.backgroundColor = Color_Hex_alpha(@"#000000", 0.);
-        } completion:^(BOOL finished) {
-            Code_Strongify(self)
-            [self dismissViewControllerAnimated:NO completion:nil];
-            self->_isHidden = NO;
-            [self setNeedsStatusBarAppearanceUpdate];
-        }];
+        [self dismissViewControllerAnimated:NO completion:nil];
+//        Code_Weakify(self)
+//        [UIView animateWithDuration:.25 animations:^{
+//            Code_Strongify(self)
+//            self.imageView.frame = self->_prect;
+//            self.imageView.contentMode = self->_mode;
+//            self.view.backgroundColor = Color_Hex_alpha(@"#000000", 0.);
+//        } completion:^(BOOL finished) {
+//            Code_Strongify(self)
+//            [self dismissViewControllerAnimated:NO completion:nil];
+//            self->_isHidden = NO;
+//            [self setNeedsStatusBarAppearanceUpdate];
+//        }];
     }
 }
 
@@ -290,7 +291,7 @@
     AVPlayerLayer *_layer;
     NSString *_videoString;
     CGFloat _videoTime;
-    
+    BOOL _isVideo;
 }
 // 关闭按钮
 @property (nonatomic, strong) UIButton *close_btn;
@@ -343,9 +344,12 @@
         self.showsHorizontalScrollIndicator = NO;
         self.backgroundColor = UIColor.clearColor;
         _videoString = videoString;
+        _isVideo = YES;
         self.showController = YES;
         self.endHandler = endHandler;
         [self initVideoViewDidVideoEnd:endHandler];
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showOrHidden)];
+        [self addGestureRecognizer:tap];
     }
     return self;
 }
@@ -416,6 +420,13 @@
             NSLog(@"播放 结束");
         }
     }];
+}
+- (void)showOrHidden {
+    if (_isVideo) {
+        [UIView animateWithDuration:.25 animations:^{
+            self.showController = !self.showController;
+        }];
+    }
 }
 //转换时间格式的方法
 - (NSString *)formatTimeWithTimeInterVal:(NSTimeInterval)timeInterVal{
@@ -563,9 +574,9 @@
     _playBtn.frame = CGRectMake(10, self.cp_height-44, 34., 34.);
     _currentTimeLabel.frame = CGRectMake(_playBtn.cp_right+10., self.cp_height-44, 40., 34.);
     _totalTimeLabel.frame = CGRectMake(self.cp_width - 55., self.cp_height-44, 40., 34.);
-    _progressView.frame = CGRectMake(_currentTimeLabel.cp_right+5, self.cp_height-44, self.cp_width - 55. - _currentTimeLabel.cp_right-10, 34.);
+    _slider.frame = CGRectMake(_currentTimeLabel.cp_right+5, self.cp_height-44, self.cp_width - 55. - _currentTimeLabel.cp_right-10, 34.);
+    _progressView.frame = _slider.frame;
     _progressView.cp_centerY = _currentTimeLabel.cp_centerY;
-    _slider.frame = _progressView.frame;
     _slider.cp_centerY = _progressView.cp_centerY;
 }
 

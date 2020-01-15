@@ -23,6 +23,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) CPProgressControl endDidControl;
 
 
+
+@property (nonatomic, assign) CGFloat cp_progressWidth;
+@property (nonatomic, assign) CGFloat cp_controlSiza;
+@property (nonatomic, assign) CGFloat cp_controlOffset;
+
 /// 设置 颜色与进度
 - (instancetype)setDefaultColor:(UIColor *)defaultColor tintColor:(UIColor *)tintColor progress:(CGFloat)progress;
 /// 设置 进度

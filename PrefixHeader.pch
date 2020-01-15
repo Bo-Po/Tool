@@ -31,9 +31,12 @@ typedef void(^CPProgressControl)(double);
 
 // 三方
 #import "UIImageView+WebCache.h"
+#import "Masonry.h"
+#import "PGDatePickManager.h"
 
 // view
 #import "UIView+Frame.h"
+#import "UIView+CALayer.h"
 #import "CPSwithButtonView.h"
 #import "UIView+Layout.h"
 #import "UIColor+Hex.h"
@@ -41,6 +44,8 @@ typedef void(^CPProgressControl)(double);
 #import "CPPhotoPreview.h"
 #import "CPProgressBar.h"
 #import "CPNoticeLabel.h"
+//#import "CPSpotLoadView.h"
+//#import "CPToastView.h"
 
 // ViewController
 #import "CPTabbarController.h"
@@ -52,11 +57,10 @@ typedef void(^CPProgressControl)(double);
 // 常用
 #import "AppDelegate.h"
 #import "ExceptionHandler.h"
-#import "CPSpotLoadView.h"
 
 #pragma mark - ------- 设备 层 ------- -
 // 是否是iPad
-#define isPad (UI_USER_INTERFACE_IDIOM()== UIUserInterfaceIdiomPad)
+//#define isPad (UI_USER_INTERFACE_IDIOM()== UIUserInterfaceIdiomPad)
 #define isPhone (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
 #define isPhoneX ({\
                     BOOL isX = NO;\
@@ -120,7 +124,7 @@ typedef void(^CPProgressControl)(double);
 #endif
 // 字符串
 #define Code_StringFormat(format,...) ([NSString stringWithFormat:format,##__VA_ARGS__])
-#define Code_NSStringFromNumber(num) StringFormat(@"%@", num)
+#define Code_NSStringFromNumber(num) Code_StringFormat(@"%@", num)
 
 //#define IFlyObjc [IFlySpeechSynthesizer sharedInstance]
 //

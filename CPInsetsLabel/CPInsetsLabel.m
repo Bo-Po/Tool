@@ -21,6 +21,7 @@
 - (instancetype)init {
     if (self = [super init]) {
         _textInsets = UIEdgeInsetsZero;
+        _textVerticalAlignment = CPVerticalAlignmentMiddle;
     }
     return self;
 }
@@ -28,14 +29,43 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         _textInsets = UIEdgeInsetsZero;
+        _textVerticalAlignment = CPVerticalAlignmentMiddle;
     }
     return self;
+}
+
+- (void)setTextVerticalAlignment:(CPVerticalAlignment)textVerticalAlignment {
+    _textVerticalAlignment = textVerticalAlignment;
 }
 
 - (CGRect)textRectForBounds:(CGRect)bounds limitedToNumberOfLines:(NSInteger)numberOfLines {
     UIEdgeInsets insets = _textInsets;
     CGRect rect = [super textRectForBounds:UIEdgeInsetsInsetRect(bounds, insets)
                     limitedToNumberOfLines:numberOfLines];
+    
+    switch (self.textVerticalAlignment) {
+            
+        case CPVerticalAlignmentTop:
+            
+            rect.origin.y = bounds.origin.y;
+            
+            break;
+            
+        case CPVerticalAlignmentBottom:
+            
+            rect.origin.y = bounds.origin.y + bounds.size.height - rect.size.height;
+            
+            break;
+            
+        case CPVerticalAlignmentMiddle:
+            
+                // Fall through.
+            
+        default:
+            
+            rect.origin.y = bounds.origin.y + (bounds.size.height - rect.size.height) / 2.0;
+            
+    }
     
     rect.origin.x    -= insets.left;
     rect.origin.y    -= insets.top;

@@ -144,6 +144,14 @@
     self.titleLabel.textColor = _textColor;
     self.afterLabel.textColor = _textColor;
 }
+- (void)setTextFont:(UIFont *)textFont {
+    if (_textFont == textFont) {
+        return;
+    }
+    _textFont = textFont;
+    self.titleLabel.font = _textFont;
+    self.afterLabel.font = _textFont;
+}
 
 - (UILabel *)titleLabel {
     if (!_titleLabel) {

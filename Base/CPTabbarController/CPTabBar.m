@@ -6,7 +6,6 @@
 //  Copyright © 2016年 li  bo. All rights reserved.
 //
 
-#import "CPTabBar.h"
 #import "CPImageView.h"
 #import <objc/runtime.h>
 
@@ -32,28 +31,7 @@
 {
     if (self=[super initWithFrame:frame]) {
         self.backgroundColor = [UIColor whiteColor];
-        
-//        [self addSubview:self.plusBtn];
-//
-//        UIImageView *img = [[UIImageView alloc] init];
-//        img.image = [UIImage imageNamed:@"app_center"];
-//        img.userInteractionEnabled = YES;
-//        img.tag = 10011;
-//        self.addView = img;
-//
-//        UILabel *label = [[UILabel alloc] init];
-//        label.text = @"发布";
-//        label.font = [UIFont systemFontOfSize:10];
-//        [label sizeToFit];
-//        label.textColor = [UIColor grayColor];
-//        label.tag = 12580;
-//        [self addSubview:label];
-//        self.titleLbl = label;
-//
-//        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hanleTap:)];
-//        [img addGestureRecognizer:tap];
-//        [self addSubview:img];
-        
+        self.style = CPBarStyleDefault;
     }
     return self;
 }
@@ -62,35 +40,100 @@
     [super layoutSubviews];
     //系统自带的按钮类型是UITabBarButton，找出这些类型的按钮，然后重新排布位置，空出中间的位置
     Class class = NSClassFromString(@"UITabBarButton");
-    
     NSInteger count = self.items.count;
-
+    if (self.style == CPBarStyleDefault) {
+        count++;
+    }
     CGFloat w = self.bounds.size.width / count;
     int btnIndex = 0;
-    for (UIView *btn in self.subviews) {//遍历tabbar的子控件
-        if ([btn isKindOfClass:class]) {//如果是系统的UITabBarButton，那么就调整子控件位置，空出中间位置
-            // 如果是索引是2(从0开始的)，直接让索引++，目的就是让消息按钮的位置向右移动，空出来发布按钮的位置
-//            if (btnIndex == _index) {
-//                btnIndex++;
-//            }
-            CGRect frame = btn.frame;
-            //每一个按钮的宽度
-            frame.size.width = w;
-            frame.origin.x = frame.size.width * btnIndex;
-            if (btnIndex == _index) {
-                frame.origin.y = frame.origin.y - _offset;
-                frame.size.height = frame.size.height + _offset;
-                _customBigView = btn;
-                [self.shadowImageLayer setArcCenterOfCircle:CGPointMake(CGRectGetMidX(frame), _offset+15) offset:_offset+5 radius:_offset+10.f];
-                self.shadowImageLayer.frame = CGRectMake(0, -(_offset+5), self.frame.size.width, _offset+5+self.frame.size.height);
+    if (self.style == CPBarStyleDefault) {
+        for (UIView *child in self.subviews) {
+            if ([child isKindOfClass:class]) {
+                CGFloat width = w;
+                CGFloat height = child.frame.size.height;
+                CGFloat x = btnIndex * width;
+                CGFloat y = child.frame.origin.y;
+                child.frame = CGRectMake(x, y, width, height);
+                btnIndex++;
+                if (btnIndex == _index) {
+                    CGRect frame = child.frame;
+                    frame.origin.x = frame.size.width * btnIndex;
+                    frame.origin.y = frame.origin.y - _offset+10;
+                    frame.size.height = frame.size.height + _offset;
+//                    CGFloat plusX = w * btnIndex;
+//                    CGFloat plusY = -(w / 2);
+                    self.plusBtn.frame = frame; //CGRectMake(plusX, plusY, self.plusBtn.currentBackgroundImage.size.width, self.plusBtn.currentBackgroundImage.size.height);
+                    self.addView.frame = CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height-20);
+                    self.titleLbl.center = CGPointMake(self.plusBtn.center.x, (frame.origin.y+frame.size.height-(self.titleLbl.bounds.size.height/2.)));
+                    [self.shadowImageLayer setArcCenterOfCircle:CGPointMake(CGRectGetMidX(frame), _offset+20) offset:_offset+5 radius:_offset+10.f];
+                    self.shadowImageLayer.frame = CGRectMake(0, -(_offset+5), self.frame.size.width, _offset+5+self.frame.size.height);
+                    btnIndex ++;
+                }
             }
-            btn.frame = frame;
-            btnIndex++;
+        }
+        [self bringSubviewToFront:self.plusBtn];
+    } else {
+        for (UIView *btn in self.subviews) {//遍历tabbar的子控件
+            if ([btn isKindOfClass:class]) {//如果是系统的UITabBarButton，那么就调整子控件位置，空出中间位置
+                                            // 如果是索引是2(从0开始的)，直接让索引++，目的就是让消息按钮的位置向右移动，空出来发布按钮的位置
+                                            //            if (btnIndex == _index) {
+                                            //                btnIndex++;
+                                            //            }
+                CGRect frame = btn.frame;
+                    //每一个按钮的宽度
+                frame.size.width = w;
+                frame.origin.x = frame.size.width * btnIndex;
+                if (btnIndex == _index) {
+                    frame.origin.y = frame.origin.y - _offset;
+                    frame.size.height = frame.size.height + _offset;
+                    _customBigView = btn;
+                    [self.shadowImageLayer setArcCenterOfCircle:CGPointMake(CGRectGetMidX(frame), _offset+15) offset:_offset+5 radius:_offset+10.f];
+                    self.shadowImageLayer.frame = CGRectMake(0, -(_offset+5), self.frame.size.width, _offset+5+self.frame.size.height);
+                }
+                btn.frame = frame;
+                btnIndex++;
+            }
         }
     }
     [self sendSubviewToBack:self.shadowImageLayer];
 }
 
+- (void)setStyle:(CPBarStyle)style {
+    if (_style != style) {
+        _style = style;
+    }
+    if (_style == CPBarStyleDefault) {
+        [self addSubview:self.plusBtn];
+        if (!self.addView) {
+            UIImageView *img = [[UIImageView alloc] init];
+            img.image = [UIImage imageNamed:@"center"];
+            img.contentMode = UIViewContentModeScaleAspectFit;
+            img.userInteractionEnabled = YES;
+            img.tag = 10011;
+            self.addView = img;
+        }
+        if (self.titleLbl) {
+            UILabel *label = [[UILabel alloc] init];
+            label.text = @"发布";
+            label.font = [UIFont systemFontOfSize:10];
+            [label sizeToFit];
+            label.textColor = [UIColor grayColor];
+            label.tag = 12580;
+            [self addSubview:label];
+            self.titleLbl = label;
+        }
+        
+//        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hanleTap:)];
+//        [self.addView addGestureRecognizer:tap];
+        [self addSubview:self.addView];
+    } else {
+        [_plusBtn removeFromSuperview];
+        [self.addView removeFromSuperview];
+        [self.titleLbl removeFromSuperview];
+        self.addView = nil;
+        self.titleLbl = nil;
+    }
+}
 - (void)setBigItem:(int)index {
     _index = index;
 }
@@ -112,7 +155,7 @@
 
 -(void)hanleTap:(UITapGestureRecognizer *)tap
 {
-    _addView.image = [UIImage imageNamed:@"app_center_press"];
+    _addView.image = [UIImage imageNamed:@"center"];
     if ([self.delegate respondsToSelector:@selector(tabBarPlusBtnClick:)]) {
         [self.myDelegate tabBarPlusBtnClick:self];
     }

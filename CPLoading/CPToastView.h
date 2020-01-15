@@ -10,7 +10,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef enum : NSUInteger {
+    CPToastCenter = 0,
+    CPToastTop,
+    CPToastBottom,
+} CPToastPosition;
+
 @interface CPToastView : UIView
+
+
++ (void)showMessage:(NSString *)msg;
++ (void)showMessage:(NSString *)msg position:(CPToastPosition)position;
++ (void)showMessage:(NSString *)msg exist:(CGFloat)duration;
++ (void)showMessage:(NSString *)msg exist:(CGFloat)duration position:(CPToastPosition)position;
 
 @end
 
